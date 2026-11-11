@@ -1,4 +1,5 @@
-export type Tree = number | { op: string; left: Tree; right: Tree };
+import { LangError } from "./error.ts";
+export type Tree = number | { name: string; position: number } | { op: string; left: Tree; right: Tree };
 
 const mathOptions: Partial<Record<string, (x: number, y: number) => number>> = {
     'plus': (x, y) => x + y,
@@ -23,11 +24,16 @@ Caveat:
 - There is no divide by zero handelling, "6/0" returns Infinity and "0/0" returns NaN.
 */
 
-export function evaluate(tree: Tree): number {
+export function evaluate(tree: Tree, variables: Partial<Record<string, number>>): number {
     if (typeof tree === "number") {
         return tree;
     }
+    if ("name" in tree) {
+        const value = variables[tree.name.toLowerCase()];
+        if (value === undefined) throw new LangError(`"${tree.name}" was never set.`, tree.position, tree.name.length + tree.position - 1);
+        return value;
+    }
     const operator = tree.op;
     if (!mathOptions[operator]) throw new Error(`Unknown operator "${operator}".`);
-    return mathOptions[operator](evaluate(tree.left), evaluate(tree.right));
+    return mathOptions[operator](evaluate(tree.left, variables), evaluate(tree.right, variables));
 }

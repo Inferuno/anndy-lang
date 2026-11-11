@@ -1,7 +1,7 @@
 import { LangError } from "./error.ts";
 
 type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret";
-type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string };
+type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string };
 
 const ops: Partial<Record<string, SymbolKind>> = {
     '+': "plus",
@@ -54,22 +54,29 @@ export function tokenize(text: string): Token[] {
             continue;
         }
 
-        if (!"1234567890.".includes(char)) {
-            throw new LangError(`Unknown character "${char}".`, i + 1);
+        if (!/[a-z0-9.]/i.test(char)) {
+            throw new LangError(`Unknown character "${char}".`, i + 1, i + 1);
         }
         const start: number = i;
         let seenDot: boolean = false;
-        while (i < text.length && "1234567890.".includes(text[i])) {
+        while (i < text.length && /[a-z0-9.]/i.test(text[i])) {
             if (text[i] === "." && !seenDot) seenDot = true;
             else if (text[i] === ".") {
-                throw new LangError(`Unknown number "${text.slice(start, i + 1)}".`, i + 1);
+                throw new LangError(`Unknown number "${text.slice(start, i + 1)}".`, i + 1, i + 1);
             }
             i++;
         }
 
-        const numberText: string = text.slice(start, i);
-        if (numberText === ".") throw new LangError(`Unknown number "${numberText}".`, start + 1);
-        tokens.push({ kind: "number", value: Number(numberText), position: start + 1, text: numberText });
+        const word: string = text.slice(start, i);
+        if (/[a-z]/i.test(word)) {
+            if (seenDot) {
+                throw new LangError("Variables cannot contain a period.", start + 1, i);
+            }
+            tokens.push({ kind: "name", position: start + 1, text: word });
+            continue;
+        }
+        if (word === ".") throw new LangError(`Unknown number "${word}".`, start + 1, start + 1 + word.length - 1);
+        tokens.push({ kind: "number", value: Number(word), position: start + 1, text: word });
 
     }
 
