@@ -1,16 +1,18 @@
 import { LangError } from "./error.ts";
 
-type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret";
+type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret" | "lbracket" | "rbracket";
 type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string };
 
-const ops: Partial<Record<string, SymbolKind>> = {
+const symbols: Partial<Record<string, SymbolKind>> = {
     '+': "plus",
     '-': "minus",
     '*': "asterisk",
     '/': "slash",
     '(': "lparen",
     ')': "rparen",
-    '^': "caret"
+    '^': "caret",
+    '[': "lbracket",
+    ']': "rbracket"
 };
 
 export type { Token, SymbolKind };
@@ -23,7 +25,7 @@ Output: A list of tokens representing the arithmetic.
 
 Called by: main.ts (once per line).
 
-Errors: 
+Errors:
 - If you give it just a "." it will error with "Error: Unknown number "." at position 1."
 - If you give it a number like "5.2.3" it will error with "Error: Unknown number "5.2." at position 4."
 - If give it a number like "5x" it will error with "Error: Unknown character "x" at position 2."
@@ -48,8 +50,8 @@ export function tokenize(text: string): Token[] {
             continue;
         }
 
-        if (ops[char]) {
-            tokens.push({ kind: ops[char], position: i + 1, text: char });
+        if (symbols[char]) {
+            tokens.push({ kind: symbols[char], position: i + 1, text: char });
             i++;
             continue;
         }

@@ -2,23 +2,26 @@ import { tokenize } from "./tokenizer.ts";
 import { evaluate } from "./evaluator.ts";
 import { parse } from "./parser.ts";
 import { LangError } from "./error.ts";
+import { variables } from "./executor.ts";
+import { execute } from "./executor.ts";
 
 const code = `
-5 + u
+set x to [15 + 7]
+x * 5
 `;
 
 
-const codeLines: string[] = code.split("\n").map(line => line.trimEnd());
+const codeLines = code.split("\n").map(line => line.trim())
 
-const variables: Partial<Record<string, number>> = {
-    'x': 15,
-    'total': 5
-}
 for (let i = 0; i < codeLines.length; i++) {
     const line = codeLines[i];
     try {
         const tokens = tokenize(line);
         if (tokens.length === 0) continue;
+
+        const wasExecuted = execute(tokens);
+
+        if (wasExecuted) continue;
 
         const tree = parse(tokens);
         const answer = evaluate(tree, variables);
