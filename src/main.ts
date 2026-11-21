@@ -3,11 +3,12 @@ import { evaluate } from "./evaluator.ts";
 import { parse } from "./parser.ts";
 import { LangError } from "./error.ts";
 
-const code = `5+x
-x.5
-12b
+const code = `
+15+x*(total^x)
+12+2
+3*(5/5)
+x
 total
-y
 `;
 
 
