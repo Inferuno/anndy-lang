@@ -4,11 +4,7 @@ import { parse } from "./parser.ts";
 import { LangError } from "./error.ts";
 
 const code = `
-15+x*(total^x)
-12+2
-3*(5/5)
-x
-total
+5 + u
 `;
 
 

@@ -36,6 +36,8 @@ export function parse(tokens: Token[]): Tree {
         if (tokenKind === "lparen") depth += 1;
         if (tokenKind === "rparen") depth -= 1;
 
+        if (depth === -1) throw new LangError("Expected an opening paren.", tokens[i].position, tokens[i].position);
+
         if (depth === 0) {
             if (precedence[tokenKind] === undefined) continue;
 
@@ -45,6 +47,8 @@ export function parse(tokens: Token[]): Tree {
             }
         }
     }
+    if (depth >= 1) throw new LangError("Expected a closing paren.", tokens[0].position, tokens[tokens.length - 1].position + tokens[tokens.length - 1].text.length - 1);
+
 
     if (cutIndex === -1 && tokens[0].kind === "minus") {
         return { op: "minus", left: 0, right: parse(tokens.slice(1)) };
