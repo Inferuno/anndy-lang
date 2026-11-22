@@ -3,7 +3,6 @@ import type { Token } from "./tokenizer.ts";
 import { evaluate } from "./evaluator.ts";
 import { parse } from "./parser.ts";
 import { mathOptions } from "./evaluator.ts";
-import { symbols } from "./tokenizer.ts";
 
 export const variables: Partial<Record<string, number>> = {}
 

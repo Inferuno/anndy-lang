@@ -1,9 +1,9 @@
-import { tokenize } from "./tokenizer.ts";
-import { evaluate } from "./evaluator.ts";
-import { parse } from "./parser.ts";
-import { LangError } from "./error.ts";
-import { variables } from "./executor.ts";
-import { execute } from "./executor.ts";
+import { tokenize } from "./lang/tokenizer.ts";
+import { evaluate } from "./lang/evaluator.ts";
+import { parse } from "./lang/parser.ts";
+import { LangError } from "./lang/error.ts";
+import { variables } from "./lang/executor.ts";
+import { execute } from "./lang/executor.ts";
 
 const code = `
 set x to [5]
