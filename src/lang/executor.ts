@@ -3,6 +3,7 @@ import type { Token } from "./tokenizer.ts";
 import { evaluate } from "./evaluator.ts";
 import { parse } from "./parser.ts";
 import { mathOptions } from "./evaluator.ts";
+import type { Run } from "./run.ts";
 
 export const variables: Partial<Record<string, number>> = {}
 
@@ -15,7 +16,7 @@ const reservedNames: string[] = [
 ]
 
 
-export function execute(tokens: Token[]): boolean {
+export function execute(tokens: Token[], outputs: Run[]): boolean {
     function getToken(n: number) {
         return tokens[n] ?? tokens[tokens.length - 1]
     }
@@ -79,8 +80,8 @@ export function execute(tokens: Token[]): boolean {
         if (expression.length === 0) throw new LangError(`Expected an expression inside "[]".`, getToken(1).position, tokens[tokens.length - 1].position);
 
         const value = evaluate(parse(expression), variables);
-        console.log(value);
 
+        outputs.push({ kind: "print", output: value })
         return true;
     }
 

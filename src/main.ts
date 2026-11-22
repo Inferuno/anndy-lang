@@ -1,40 +1,27 @@
-import { tokenize } from "./lang/tokenizer.ts";
-import { evaluate } from "./lang/evaluator.ts";
-import { parse } from "./lang/parser.ts";
-import { LangError } from "./lang/error.ts";
-import { variables } from "./lang/executor.ts";
-import { execute } from "./lang/executor.ts";
+import { run } from "./lang/run.ts";
 
 const code = `
 set x to [5]
-set y to [3]
-change y by *[15]
-set z to [x * (y - 2)]
-print [z]
+print [x]
+change x by [3]
+print [x]
+change x by *[2]
+print [x]
+change y by [-4]
+print [y]
+change z by *[2]
+set to [5]
+set x [5]
+set x to 5
+set x to []
+print [2 + 3) * (4]
+print [(2 + 3]
+s x to [5]
+print [u]
+set x to [5 & 2]
+SET A TO [10]
+PRINT [a + x]
 `;
 
 
-const codeLines = code.split("\n").map(line => line.trim())
-
-for (let i = 0; i < codeLines.length; i++) {
-    const line = codeLines[i];
-    try {
-        const tokens = tokenize(line);
-        if (tokens.length === 0) continue;
-
-        const wasExecuted = execute(tokens);
-
-        if (wasExecuted) continue;
-        throw new LangError(`Unknown command.`, tokens[1].position, tokens[tokens.length - 1].position)
-
-    } catch (error) {
-        if (error instanceof LangError) {
-            const charMessage = error.end === error.position ? `character ${error.position}` : `characters ${error.position}-${error.end}`
-            console.log(`At line ${i + 1}, ${charMessage}: "${error.message}"`);
-        } else {
-            throw error;
-        }
-    }
-}
-
-export { variables };
+run(code);
