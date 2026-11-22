@@ -7,10 +7,10 @@ import { execute } from "./executor.ts";
 
 const code = `
 set x to [5]
-x + 5
 set y to [3]
-change y by *[12]
-x * (y - 2)
+change y by *[15]
+set z to [x * (y - 2)]
+print [z]
 `;
 
 
@@ -25,10 +25,8 @@ for (let i = 0; i < codeLines.length; i++) {
         const wasExecuted = execute(tokens);
 
         if (wasExecuted) continue;
+        throw new LangError(`Unknown command.`, tokens[1].position, tokens[tokens.length - 1].position)
 
-        const tree = parse(tokens);
-        const answer = evaluate(tree, variables);
-        console.log(answer);
     } catch (error) {
         if (error instanceof LangError) {
             const charMessage = error.end === error.position ? `character ${error.position}` : `characters ${error.position}-${error.end}`
