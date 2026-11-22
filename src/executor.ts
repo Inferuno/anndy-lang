@@ -28,7 +28,7 @@ export function execute(tokens: Token[]): boolean {
         // set <name> to [<expression>]
 
         if (getToken(1).kind !== "name" || reservedNames.includes(getToken(1)?.text.toLowerCase())) throw new LangError(`Expected a variable name.`, getToken(1)?.position, getToken(1)?.position + getToken(1)?.text.length - 1);
-        if (getToken(2).text !== "to") throw new LangError(`Expected "to".`, getToken(2)?.position, getToken(2)?.position + getToken(2).text.length - 1);
+        if (getToken(2).text.toLowerCase() !== "to") throw new LangError(`Expected "to".`, getToken(2)?.position, getToken(2)?.position + getToken(2).text.length - 1);
         if (getToken(3).text !== "[") throw new LangError(`Missing "[".`, getToken(3).position, getToken(3).position);
         if (getToken(tokens.length - 1).text !== "]") throw new LangError(`Missing "]".`, tokens[tokens.length - 1]?.position, tokens[tokens.length - 1]?.position);
         if (expression.length === 0) throw new LangError(`Expected a number inside "[]".`, getToken(3).position, tokens[tokens.length - 1].position);
@@ -48,7 +48,7 @@ export function execute(tokens: Token[]): boolean {
 
         // change <name> by <?op>[<expression>]
         if (getToken(1).kind !== "name" || reservedNames.includes(getToken(1)?.text.toLowerCase())) throw new LangError(`Expected a variable name.`, getToken(1)?.position, getToken(1)?.position + getToken(1)?.text.length - 1);
-        if (getToken(2).text !== "by") throw new LangError(`Expected "by".`, getToken(2)?.position, getToken(2)?.position + getToken(2).text.length - 1);
+        if (getToken(2).text.toLowerCase() !== "by") throw new LangError(`Expected "by".`, getToken(2)?.position, getToken(2)?.position + getToken(2).text.length - 1);
         if (start === 5 && (getToken(3).text === "*" || getToken(3).text === "/" || getToken(3).text === "^") && variables[getToken(1).text.toLowerCase()] === undefined) throw new LangError(`Can't use "${getToken(3).text}" on "${getToken(1).text}" before it has a value.`, getToken(1).position, getToken(1).position);
         if (getToken(start - 1).text !== "[") throw new LangError(`Missing "[".`, getToken(start - 1).position, getToken(start - 1).position);
         if (tokens[tokens.length - 1]?.text !== "]") throw new LangError(`Missing "]".`, tokens[tokens.length - 1]?.position, tokens[tokens.length - 1]?.position);
