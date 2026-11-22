@@ -3,7 +3,7 @@ import { LangError } from "./error.ts";
 type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret" | "lbracket" | "rbracket";
 type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string };
 
-const symbols: Partial<Record<string, SymbolKind>> = {
+export const symbols: Partial<Record<string, SymbolKind>> = {
     '+': "plus",
     '-': "minus",
     '*': "asterisk",

@@ -6,8 +6,11 @@ import { variables } from "./executor.ts";
 import { execute } from "./executor.ts";
 
 const code = `
-set x to [15 + 7]
-x * 5
+set x to [5]
+x + 5
+set y to [3]
+change y by *[12]
+x * (y - 2)
 `;
 
 

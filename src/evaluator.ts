@@ -1,7 +1,7 @@
 import { LangError } from "./error.ts";
 export type Tree = number | { name: string; position: number } | { op: string; left: Tree; right: Tree };
 
-const mathOptions: Partial<Record<string, (x: number, y: number) => number>> = {
+export const mathOptions: Partial<Record<string, (x: number, y: number) => number>> = {
     'plus': (x, y) => x + y,
     'minus': (x, y) => x - y,
     'asterisk': (x, y) => x * y,
@@ -17,7 +17,7 @@ Output: The evalution of the tree as a number.
 
 Called by: main.ts (once per tree).
 
-Errors: 
+Errors:
 - If you hand it a tree that has an operator not permited (or any random charactor) like "}" it will return: "Unknown operator "}""
 
 Caveat:
