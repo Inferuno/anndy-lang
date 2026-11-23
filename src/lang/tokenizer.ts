@@ -1,7 +1,18 @@
 import { LangError } from "./error.ts";
 
 type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret" | "lbracket" | "rbracket";
-type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string };
+type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string } | { kind: "keyword"; position: number; text: string };
+
+export const reservedNames: string[] = [
+    "set",
+    "print",
+    "to",
+    "change",
+    "by",
+    "if",
+    "else",
+    "function"
+]
 
 export const symbols: Partial<Record<string, SymbolKind>> = {
     '+': "plus",
@@ -74,6 +85,12 @@ export function tokenize(text: string): Token[] {
             if (seenDot) {
                 throw new LangError("Variables cannot contain a period.", start + 1, i);
             }
+
+            if (reservedNames.includes(word.toLowerCase())) {
+                tokens.push({ kind: "keyword", position: start + 1, text: word });
+                continue;
+            }
+
             tokens.push({ kind: "name", position: start + 1, text: word });
             continue;
         }

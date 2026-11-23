@@ -1,6 +1,7 @@
 import { run } from "../lang/run.ts";
 
 const codeBox = document.querySelector<HTMLTextAreaElement>(".code")!;
+const inputBox = document.querySelector<HTMLTextAreaElement>(".input")!;
 const runBtn = document.querySelector<HTMLButtonElement>(".btn-run")!;
 const outputBox = document.querySelector<HTMLPreElement>(".output")!;
 const gutter = document.querySelector<HTMLPreElement>(".gutter")!;
@@ -21,7 +22,7 @@ updateLines()
 
 
 runBtn.addEventListener("click", () => {
-    const logs = run(codeBox.value);
+    const logs = run(codeBox.value, inputBox.value);
     outputBox.replaceChildren();
 
     logs.forEach((log, i) => {

@@ -16,6 +16,7 @@ export function parse(tokens: Token[]): Tree {
         const token = tokens[0];
 
         if (token.kind === "name") return { name: token.text, position: token.position };
+        if (token.kind === "keyword") throw new LangError(`"${token.text}" is a keyword, not a variable.`, token.position, token.position + token.text.length - 1)
         if (token.kind !== "number") throw new LangError(`Unknown expression "${token.text}".`, token.position, token.position + token.text.length - 1);
         return token.value;
     }
@@ -31,7 +32,7 @@ export function parse(tokens: Token[]): Tree {
 
         if (isNegativeSign) continue;
 
-        if (tokenKind === "number" || tokenKind === "name") continue;
+        if (tokenKind === "number" || tokenKind === "name" || tokenKind === "keyword") continue;
 
         if (tokenKind === "lparen") depth += 1;
         if (tokenKind === "rparen") depth -= 1;

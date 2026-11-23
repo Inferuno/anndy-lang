@@ -4,8 +4,11 @@ import { LangError } from "./error.ts";
 
 export type Run = { kind: "print"; output: number | string } | { kind: "error"; output: string; start: number; end: number; line: number };
 
-export function run(code: string): Run[] {
+export function run(code: string, inputText: string): Run[] {
     const outputs: Run[] = []
+    const variables: Partial<Record<string, number>> = {}
+
+    if (inputText !== "") variables["input"] = Number(inputText)
 
     const codeLines = code.split("\n").map(line => line.trim())
 
@@ -15,7 +18,7 @@ export function run(code: string): Run[] {
             const tokens = tokenize(line);
             if (tokens.length === 0) continue;
 
-            const wasExecuted = execute(tokens, outputs);
+            const wasExecuted = execute(tokens, outputs, variables);
 
             if (wasExecuted) continue;
 
