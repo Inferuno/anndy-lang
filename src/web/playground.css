@@ -16,6 +16,12 @@
     --faint: oklch(0.62 0.05 285);
     --error: oklch(0.78 0.12 20);
 
+    --tok-keyword: var(--accent);
+    --tok-name: oklch(0.82 0.10 220);
+    --tok-number: oklch(0.80 0.13 150);
+    --tok-bracket: oklch(0.72 0.08 320);
+    --tok-operator: oklch(0.80 0.10 20);
+
     --accent: oklch(0.80 0.15 75);
     --accent-text: oklch(0.28 0.06 75);
 
@@ -241,18 +247,8 @@ nav .btn-run:hover {
 }
 
 .code {
-    margin: 0;
-    padding: 16px 18px;
-    border: 0;
-
-    font-family: var(--font-code);
-    font-size: var(--code-size);
-    line-height: var(--code-line);
-    tab-size: 4;
-    white-space: pre;
-
     background: transparent;
-    color: var(--text);
+    color: transparent;
     caret-color: var(--accent);
     overflow: auto;
     resize: none;
@@ -263,6 +259,56 @@ nav .btn-run:hover {
     color: var(--faint);
 }
 
+.layers {
+    position: relative;
+}
+
+.highlight,
+.code {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 16px 18px;
+    border: 0;
+
+    font-family: var(--font-code);
+    font-size: var(--code-size);
+    line-height: var(--code-line);
+    tab-size: 4;
+    white-space: pre;
+}
+
+.highlight {
+    pointer-events: none;
+    overflow: hidden;
+    padding-bottom: 80px;
+    padding-right: 80px;
+}
+
+.tok-number {
+    color: var(--tok-number);
+}
+
+.tok-keyword {
+    color: var(--tok-keyword);
+}
+
+.tok-lbracket,
+.tok-rbracket {
+    color: var(--tok-bracket);
+}
+
+.tok-name {
+    color: var(--tok-name);
+}
+
+.tok-plus,
+.tok-minus,
+.tok-asterisk,
+.tok-slash,
+.tok-caret {
+    color: var(--tok-operator);
+}
 
 /* -------------- Input / Output -------------- */
 .io {

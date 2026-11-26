@@ -1,21 +1,41 @@
 import { run } from "../lang/run.ts";
+import { colorLine } from "./colorer.ts";
 
 const codeBox = document.querySelector<HTMLTextAreaElement>(".code")!;
 const inputBox = document.querySelector<HTMLTextAreaElement>(".input")!;
 const runBtn = document.querySelector<HTMLButtonElement>(".btn-run")!;
 const outputBox = document.querySelector<HTMLPreElement>(".output")!;
 const gutter = document.querySelector<HTMLPreElement>(".gutter")!;
+const highlight = document.querySelector<HTMLPreElement>(".highlight")!;
 
 function updateLines() {
-    if (!codeBox) return;
     const count = codeBox.value.split("\n").length;
     gutter.textContent = Array.from({ length: count }, (_, i) => i + 1).join("\n");
 }
 
-codeBox.addEventListener("input", updateLines);
+function syncScroll() {
+    highlight.scrollTop = codeBox.scrollTop;
+    highlight.scrollLeft = codeBox.scrollLeft;
+    gutter.scrollTop = codeBox.scrollTop;
+}
+
+codeBox.addEventListener("input", () => {
+    highlight.replaceChildren();
+
+    const lines: string[] = codeBox.value.split("\n");
+    lines.forEach((line, i) => {
+        colorLine(line, highlight);
+        if (i !== lines.length - 1) highlight.append("\n");
+    });
+    highlight.append(" ");
+
+    syncScroll();
+    updateLines();
+});
 
 codeBox.addEventListener("scroll", () => {
-    gutter.scrollTop = codeBox.scrollTop;
+    syncScroll();
+    updateLines();
 });
 
 updateLines()
