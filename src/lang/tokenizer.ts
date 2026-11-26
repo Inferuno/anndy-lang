@@ -87,6 +87,11 @@ export function tokenize(text: string): Token[] {
                 throw new LangError("Variables cannot contain a period.", start + 1, i);
             }
 
+            if (word.toLowerCase() === "nan" || word.toLowerCase() == "infinity") {
+                tokens.push({ kind: "number", value: word.toLowerCase() === "nan" ? NaN : Infinity, position: start + 1, text: word });
+                continue;
+            }
+
             if (reservedNames.includes(word.toLowerCase())) {
                 tokens.push({ kind: "keyword", position: start + 1, text: word });
                 continue;
