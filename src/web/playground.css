@@ -180,17 +180,27 @@ nav [aria-disabled="true"]:hover {
     background: none;
 }
 
+
 .btn-run,
 nav .btn-run:hover {
+    background: none;
+}
+
+.btn-face {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
     background: var(--accent);
     color: var(--accent-text);
 }
 
-.btn-run:not(:disabled):hover {
+.btn-run:not(:disabled):hover .btn-face {
     filter: brightness(1.08);
 }
 
-.btn-run:active {
+.btn-run:active .btn-face {
     transform: scale(0.8);
 }
 
