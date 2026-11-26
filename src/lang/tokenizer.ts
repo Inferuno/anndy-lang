@@ -1,6 +1,6 @@
 import { LangError } from "./error.ts";
 
-type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret" | "lbracket" | "rbracket";
+type SymbolKind = "plus" | "minus" | "asterisk" | "slash" | "lparen" | "rparen" | "caret" | "lbracket" | "rbracket" | "comma";
 type Token = { kind: "number"; value: number; position: number; text: string } | { kind: SymbolKind; position: number; text: string } | { kind: "name"; position: number; text: string } | { kind: "keyword"; position: number; text: string };
 
 export const reservedNames: string[] = [
@@ -23,7 +23,8 @@ export const symbols: Partial<Record<string, SymbolKind>> = {
     ')': "rparen",
     '^': "caret",
     '[': "lbracket",
-    ']': "rbracket"
+    ']': "rbracket",
+    ",": "comma"
 };
 
 export type { Token, SymbolKind };

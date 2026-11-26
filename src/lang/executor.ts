@@ -61,15 +61,51 @@ export function execute(tokens: Token[], outputs: Run[], variables: Partial<Reco
 
     if (tokens[0]?.text.toLowerCase() === "print") {
         const expression = tokens.slice(2, tokens.length - 1);
+        const expressions = [];
+
+        let start = 0;
+
+        let depth = 0;
+
+        const commaTokens: Token[] = [];
+
+        for (let i = 0; i < expression.length; i++) {
+            const tokenKind = expression[i].kind;
+
+            if (tokenKind === "lparen") depth += 1;
+            if (tokenKind === "rparen") depth -= 1;
+
+            if (depth === 0 && tokenKind === "comma") {
+                expressions.push(expression.slice(start, i));
+                commaTokens.push(expression[i]);
+                start = i + 1;
+            }
+        }
+
+        expressions.push(expression.slice(start));
+
 
         //print [<expression>]
         if (getToken(1).text !== "[") throw new LangError(`Missing "[".`, getToken(1).position, getToken(1).position);
         if (getToken(tokens.length - 1).text !== "]") throw new LangError(`Missing "]".`, tokens[tokens.length - 1]?.position, tokens[tokens.length - 1]?.position);
         if (expression.length === 0) throw new LangError(`Expected an expression inside "[]".`, getToken(1).position, tokens[tokens.length - 1].position);
 
-        const value = evaluate(parse(expression), variables);
+        const commas = expressions.length - 1;
 
-        outputs.push({ kind: "print", output: value })
+        expressions.forEach((segment, k) => {
+            if (segment.length !== 0) return;
+
+            const last = k === commas;
+            const ba = last ? "after" : "before" // before / after
+            const comma = last ? commaTokens[k - 1] : commaTokens[k];
+
+            throw new LangError(`Expected a value ${ba} ",".`, comma.position, comma.position);
+        })
+
+
+        const values = expressions.map(expression => evaluate(parse(expression), variables));
+
+        outputs.push({ kind: "print", output: values.join(" ") });
         return true;
     }
 

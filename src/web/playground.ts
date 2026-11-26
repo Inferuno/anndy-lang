@@ -1,4 +1,5 @@
 import { run } from "../lang/run.ts";
+import type { Run } from "../lang/run.ts";
 import { colorLine } from "./colorer.ts";
 
 const codeBox = document.querySelector<HTMLTextAreaElement>(".code")!;
@@ -19,26 +20,39 @@ function syncScroll() {
     gutter.scrollTop = codeBox.scrollTop;
 }
 
-codeBox.addEventListener("input", () => {
+let errors: Run[] = [];
+let errorTimer: ReturnType<typeof setTimeout> | undefined;
+
+function paint() {
     highlight.replaceChildren();
 
     const lines: string[] = codeBox.value.split("\n");
+
     lines.forEach((line, i) => {
-        colorLine(line, highlight);
+        const found = errors.find(r => r.kind === "error" && r.line === i + 1);
+
+        colorLine(line, highlight, found?.kind === "error" ? found : undefined);
         if (i !== lines.length - 1) highlight.append("\n");
     });
     highlight.append(" ");
 
     syncScroll();
+}
+
+codeBox.addEventListener("input", () => {
+    paint();
     updateLines();
+
+    clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => {
+        errors = run(codeBox.value, inputBox.value);
+        paint();
+    }, 500)
 });
 
-codeBox.addEventListener("scroll", () => {
-    syncScroll();
-    updateLines();
-});
+codeBox.addEventListener("scroll", syncScroll);
 
-updateLines()
+updateLines();
 
 
 runBtn.addEventListener("click", () => {
@@ -62,6 +76,43 @@ runBtn.addEventListener("click", () => {
 });
 
 codeBox.addEventListener("keydown", (event) => {
+    if (event.key === "Backspace" && codeBox.selectionStart === codeBox.selectionEnd) {
+        const cursor = codeBox.selectionStart;
+        if (codeBox.value[cursor - 1] === "[" && codeBox.value[cursor] === "]") {
+            event.preventDefault();
+
+            codeBox.setSelectionRange(cursor - 1, cursor + 1);
+
+            if (!document.execCommand("insertText", false, "")) {
+                codeBox.setRangeText("", codeBox.selectionStart, codeBox.selectionEnd, "end");
+                codeBox.dispatchEvent(new Event("input"));
+            }
+
+            return;
+        }
+    }
+    if (event.key === "[") {
+        event.preventDefault();
+
+        if (!document.execCommand("insertText", false, "[]")) {
+            codeBox.setRangeText("[]", codeBox.selectionStart, codeBox.selectionEnd, "end");
+            codeBox.dispatchEvent(new Event("input"));
+        }
+
+        const cursor = codeBox.selectionStart;
+        codeBox.setSelectionRange(cursor - 1, cursor - 1);
+        return;
+    }
+
+    if (event.key === "]") {
+        const cursor = codeBox.selectionStart;
+        if (codeBox.value[cursor] === "]") {
+            event.preventDefault();
+
+            codeBox.setSelectionRange(cursor + 1, cursor + 1);
+        }
+    }
+
     if (event.key !== "Tab" || event.shiftKey) return;
 
     event.preventDefault();
