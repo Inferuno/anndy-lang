@@ -1,5 +1,5 @@
 import { LangError } from "./error.ts";
-export type Tree = number | { name: string; position: number } | { op: string; left: Tree; right: Tree };
+export type Tree = number | string | { name: string; position: number } | { op: string; left: Tree; right: Tree };
 
 export const mathOptions: Partial<Record<string, (x: number, y: number) => number>> = {
     'plus': (x, y) => x + y,
@@ -24,10 +24,12 @@ Caveat:
 - There is no divide by zero handelling, "6/0" returns Infinity and "0/0" returns NaN.
 */
 
-export function evaluate(tree: Tree, variables: Partial<Record<string, number>>): number {
-    if (typeof tree === "number") {
+export function evaluate(tree: Tree, variables: Partial<Record<string, number | string>>, start: number, end: number): number | string {
+    if (typeof tree === "number" || typeof tree === "string") {
         return tree;
     }
+
+
     if ("name" in tree) {
         const value = variables[tree.name.toLowerCase()];
         if (value === undefined) throw new LangError(`"${tree.name}" was never set.`, tree.position, tree.name.length + tree.position - 1);
@@ -35,5 +37,15 @@ export function evaluate(tree: Tree, variables: Partial<Record<string, number>>)
     }
     const operator = tree.op;
     if (!mathOptions[operator]) throw new Error(`Unknown operator "${operator}".`);
-    return mathOptions[operator](evaluate(tree.left, variables), evaluate(tree.right, variables));
+
+    const leftValue = evaluate(tree.left, variables, start, end);
+    const rightValue = evaluate(tree.right, variables, start, end);
+
+    if (typeof leftValue === "string" && typeof rightValue === "string") {
+        if (operator !== "plus") throw new LangError(`You cannot change a string this way.`, start, end);
+        return leftValue + rightValue;
+    }
+    if (typeof leftValue === "string" || typeof rightValue === "string") throw new LangError(`You cannot change a string by a number.`, start, end);
+
+    return mathOptions[operator](leftValue, rightValue);
 }

@@ -1,9 +1,9 @@
 # A[n]nd"y"
-Welcome to A[n]nd"y"! This project is a rudimentary programming language that attempts to be a step up from "block coding". 
-  
+Welcome to A[n]nd"y"! This project is a rudimentary programming language that attempts to be a step up from "block coding".
+
 **Live:** https://inferuno.github.io/anndy-lang
 
-**Status:** In v0.5, currently building web features and strings.
+**Status:** v1.0, no plans to start working on 2.0.
 
 I made this as a way to practice TypeScript, learn things like a tokenizer, parser, and evaluator. Another reason is that it's a fairly impressive project that I can show off.
 

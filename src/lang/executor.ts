@@ -4,7 +4,7 @@ import { evaluate, mathOptions } from "./evaluator.ts";
 import { parse } from "./parser.ts";
 import type { Run } from "./run.ts";
 
-export function execute(tokens: Token[], outputs: Run[], variables: Partial<Record<string, number>>): boolean {
+export function execute(tokens: Token[], outputs: Run[], variables: Partial<Record<string, number | string>>): boolean {
     function getToken(n: number) {
         return tokens[n] ?? tokens[tokens.length - 1]
     }
@@ -24,7 +24,7 @@ export function execute(tokens: Token[], outputs: Run[], variables: Partial<Reco
 
 
 
-        const value = evaluate(parse(expression), variables);
+        const value = evaluate(parse(expression), variables, expression[0].position, expression[expression.length - 1].position + expression[expression.length - 1].text.length - 1);
 
         variables[getToken(1).text.toLowerCase()] = value;
         return true;
@@ -49,11 +49,11 @@ export function execute(tokens: Token[], outputs: Run[], variables: Partial<Reco
 
         if (!operation) throw new LangError(`Unknown operator "${getToken(3)?.text}".`, getToken(3).position, getToken(3).position);
 
-        const value = evaluate(parse(expression), variables);
-        const oldValue = variables[getToken(1).text.toLowerCase()] ?? 0;
+        const value = evaluate(parse(expression), variables, expression[0].position, expression[expression.length - 1].position + expression[expression.length - 1].text.length - 1);
+        const oldValue = variables[getToken(1).text.toLowerCase()] ?? (typeof value === "string" ? "" : 0);
 
 
-        const answer = operation(oldValue, value);
+        const answer = evaluate({ op: operator, left: oldValue, right: value }, variables, expression[0].position, expression[expression.length - 1].position + expression[expression.length - 1].text.length - 1);
 
         variables[getToken(1).text.toLowerCase()] = answer;
         return true;
@@ -103,7 +103,7 @@ export function execute(tokens: Token[], outputs: Run[], variables: Partial<Reco
         })
 
 
-        const values = expressions.map(expression => evaluate(parse(expression), variables));
+        const values = expressions.map(expression => evaluate(parse(expression), variables, expression[0].position, expression[expression.length - 1].position + expression[expression.length - 1].text.length - 1));
 
         outputs.push({ kind: "print", output: values.join(" ") });
         return true;

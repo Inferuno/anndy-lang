@@ -8,6 +8,7 @@ const ops: Token["kind"][] = ["plus", "minus", "caret", "slash", "asterisk"];
 function tokenType(tokenKind: Token["kind"]): string {
     if (brackets.includes(tokenKind)) return "bracket";
     if (ops.includes(tokenKind)) return "op";
+
     return tokenKind;
 }
 

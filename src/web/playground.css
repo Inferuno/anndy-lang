@@ -22,6 +22,7 @@
     --tok-bracket: oklch(0.72 0.08 320);
     --tok-operator: oklch(0.80 0.10 20);
     --tok-error: oklch(0.70 0.19 25);
+    --tok-string: oklch(0.86 0.09 185);
 
     --accent: oklch(0.80 0.15 75);
     --accent-text: oklch(0.28 0.06 75);
@@ -317,6 +318,10 @@ nav .btn-run:hover {
 
 .tok-error {
     color: var(--tok-error);
+}
+
+.tok-string {
+    color: var(--tok-string);
 }
 
 .squiggle {

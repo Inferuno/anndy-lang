@@ -6,9 +6,9 @@ export type Run = { kind: "print"; output: number | string } | { kind: "error"; 
 
 export function run(code: string, inputText: string): Run[] {
     const outputs: Run[] = []
-    const variables: Partial<Record<string, number>> = {}
+    const variables: Partial<Record<string, number | string>> = {}
 
-    if (inputText !== "") variables["input"] = Number(inputText)
+    if (inputText !== "") variables["input"] = inputText
 
     const codeLines = code.split("\n").map(line => line.trim())
 

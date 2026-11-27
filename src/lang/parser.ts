@@ -11,12 +11,13 @@ const precedence: Partial<Record<SymbolKind, number>> = {
 };
 
 export function parse(tokens: Token[]): Tree {
-    if (tokens.length <= 0) throw new Error("Expected a number.");
+    if (tokens.length <= 0) throw new Error("Expected a value.");
     if (tokens.length === 1) {
         const token = tokens[0];
 
         if (token.kind === "name") return { name: token.text, position: token.position };
         if (token.kind === "keyword") throw new LangError(`"${token.text}" is a keyword, not a variable.`, token.position, token.position + token.text.length - 1)
+        if (token.kind === "string") return token.value;
         if (token.kind !== "number") throw new LangError(`Unknown expression "${token.text}".`, token.position, token.position + token.text.length - 1);
         return token.value;
     }
@@ -28,11 +29,11 @@ export function parse(tokens: Token[]): Tree {
     for (let i = 0; i < tokens.length; i++) {
         const tokenKind = tokens[i].kind;
 
-        const isNegativeSign: boolean = tokenKind === "minus" && (i === 0 || ((tokens[i - 1].kind !== "number" && tokens[i - 1].kind !== "name") && tokens[i - 1].kind !== "rparen"));
+        const isNegativeSign: boolean = tokenKind === "minus" && (i === 0 || ((tokens[i - 1].kind !== "number" && tokens[i - 1].kind !== "name") && tokens[i - 1].kind !== "rparen" && tokens[i - 1].kind !== "string"));
 
         if (isNegativeSign) continue;
 
-        if (tokenKind === "number" || tokenKind === "name" || tokenKind === "keyword") continue;
+        if (tokenKind === "number" || tokenKind === "name" || tokenKind === "keyword" || tokenKind === "string") continue;
 
         if (tokenKind === "lparen") depth += 1;
         if (tokenKind === "rparen") depth -= 1;
@@ -57,7 +58,7 @@ export function parse(tokens: Token[]): Tree {
 
     if (cutIndex === -1) {
         if (tokens[0].kind === "lparen" && tokens[tokens.length - 1].kind === "rparen") {
-            if (tokens.length === 2) throw new LangError(`Expected a number inside "()".`, tokens[0].position, tokens[1].position);
+            if (tokens.length === 2) throw new LangError(`Expected a value inside "()".`, tokens[0].position, tokens[1].position);
             return parse(tokens.slice(1, tokens.length - 1));
         } else {
             throw new LangError(`Expected an operator.`, tokens[1].position, tokens[1].position + tokens[1].text.length - 1);
@@ -67,8 +68,8 @@ export function parse(tokens: Token[]): Tree {
     const before = tokens.slice(0, cutIndex);
     const after = tokens.slice(cutIndex + 1);
 
-    if (before.length === 0) throw new LangError(`Expected a number before "${tokens[cutIndex].text}".`, tokens[cutIndex].position, tokens[cutIndex].position);
-    if (after.length === 0) throw new LangError(`Expected a number after "${tokens[cutIndex].text}".`, tokens[cutIndex].position, tokens[cutIndex].position);
+    if (before.length === 0) throw new LangError(`Expected a value before "${tokens[cutIndex].text}".`, tokens[cutIndex].position, tokens[cutIndex].position);
+    if (after.length === 0) throw new LangError(`Expected a value after "${tokens[cutIndex].text}".`, tokens[cutIndex].position, tokens[cutIndex].position);
 
     return { op: tokens[cutIndex].kind, left: parse(before), right: parse(after) };
 }
