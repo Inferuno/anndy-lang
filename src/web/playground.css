@@ -21,6 +21,7 @@
     --tok-number: oklch(0.80 0.13 150);
     --tok-bracket: oklch(0.72 0.08 320);
     --tok-operator: oklch(0.80 0.10 20);
+    --tok-error: oklch(0.70 0.19 25);
 
     --accent: oklch(0.80 0.15 75);
     --accent-text: oklch(0.28 0.06 75);
@@ -302,8 +303,7 @@ nav .btn-run:hover {
     color: var(--tok-keyword);
 }
 
-.tok-lbracket,
-.tok-rbracket {
+.tok-bracket {
     color: var(--tok-bracket);
 }
 
@@ -311,12 +311,12 @@ nav .btn-run:hover {
     color: var(--tok-name);
 }
 
-.tok-plus,
-.tok-minus,
-.tok-asterisk,
-.tok-slash,
-.tok-caret {
+.tok-op {
     color: var(--tok-operator);
+}
+
+.tok-error {
+    color: var(--tok-error);
 }
 
 .squiggle {

@@ -50,6 +50,17 @@ codeBox.addEventListener("input", () => {
     }, 500)
 });
 
+inputBox.addEventListener("input", () => {
+    paint();
+    updateLines();
+
+    clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => {
+        errors = run(codeBox.value, inputBox.value);
+        paint();
+    }, 500)
+});
+
 codeBox.addEventListener("scroll", syncScroll);
 
 updateLines();
